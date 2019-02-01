@@ -19,8 +19,11 @@ fileName vs object name?
  */
 
 object Main extends App {
-  val connection = MinioConnectionProperties("http://localhost:9000", "AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
+//  val connection = MinioConnectionProperties("http://localhost:9000", "AKIAIOSFODNN7EXAMPLE", "wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY")
+  val connection = MinioConnectionProperties("http://localhost:9001", "minio", "minio123")
   val minioTest =  new MinioTest(connection)
+
+  println(minioTest.getDownloadadbleURL("picturebucket", "download.png"))
 
   minioTest.complexRoute()
 }

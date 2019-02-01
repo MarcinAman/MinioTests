@@ -1,6 +1,5 @@
 import java.io.InputStream
 
-import Main.minioTest
 import io.minio.MinioClient
 import io.minio.errors.InvalidBucketNameException
 
