@@ -16,6 +16,7 @@ class Minio(private val connectionProperties: MinioConnectionProperties){
     connectionProperties.accessKey, connectionProperties.secretKey)
 
   def listBucketContent(bucketName: String)(implicit ec: ExecutionContext): Future[Option[BucketContent]] = {
+    logger.debug(s"request to list bucket content with args: $bucketName")
     try {
       val content = minioClient.listObjects(bucketName).asScala.map(e => e.get().objectName()).toList
 
@@ -27,13 +28,17 @@ class Minio(private val connectionProperties: MinioConnectionProperties){
     }
   }
 
-  def getDownloadableURL(request: LinkRequest): Option[Link] = {
+  def getDownloadableURL(request: LinkRequest)(implicit ec: ExecutionContext): Future[Option[Link]] = {
+    logger.debug(s"request to get dowloadable url with args: bucketName=${request.bucket}, filename=${request.fileName}")
+
     try {
       val url = minioClient.presignedGetObject(request.bucket, request.fileName)
 
-      Option(Link(url = url, bucket = request.bucket, fileName = request.fileName))
+      Future(Option(Link(url = url, bucket = request.bucket, fileName = request.fileName)))
     } catch {
-      case _: Exception => Option.empty
+      case e: Exception =>
+        logger.error(e.toString)
+        Future(Option.empty)
     }
   }
 }

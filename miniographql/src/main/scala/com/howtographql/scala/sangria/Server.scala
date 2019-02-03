@@ -48,4 +48,7 @@ Co to ma robic:
 - wylistowac content z bucketow
 - udostepnic url z wybranego pliku po buckecie i nazwie pliku
 - upload pliku?
+
+Jak zrobic typowy actor pattern w dockerze?
+tak zeby polaczenie zawsze bylo po jednym sockecie
  */

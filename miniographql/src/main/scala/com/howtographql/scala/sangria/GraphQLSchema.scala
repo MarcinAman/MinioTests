@@ -2,7 +2,7 @@ package com.howtographql.scala.sangria
 
 import model.model._
 import sangria.macros.derive._
-import sangria.schema.{Field, ListType, ObjectType}
+import sangria.schema.{Field, ObjectType}
 
 import scala.concurrent.{ExecutionContext, ExecutionContextExecutor}
 
@@ -20,10 +20,16 @@ object GraphQLSchema {
       Field("allLinks",
         OptionType(bucketContentType),
         arguments = List(Argument("bucket", StringType)),
-        resolve = c => c.ctx.minio.listBucketContent(c.args.arg("bucket")))
+        resolve = c => c.ctx.minio.listBucketContent(c.args.arg("bucket"))),
+      Field("url",
+        OptionType(LinkType),
+        arguments = List(Argument("bucket", StringType), Argument("fileName", StringType)),
+        resolve = c =>
+          c.ctx.minio.getDownloadableURL(
+            LinkRequest(bucket = c.args.arg("bucket"), fileName = c.args.arg("fileName")))
+      )
     )
   )
 
-  // 3
   val SchemaDefinition = Schema(QueryType)
 }
