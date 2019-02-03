@@ -17,7 +17,7 @@ object GraphQLSchema {
   val QueryType = ObjectType(
     "Query",
     fields[MinioContext, Unit](
-      Field("allLinks",
+      Field("bucketContent",
         OptionType(bucketContentType),
         arguments = List(Argument("bucket", StringType)),
         resolve = c => c.ctx.minio.listBucketContent(c.args.arg("bucket"))),
@@ -31,5 +31,22 @@ object GraphQLSchema {
     )
   )
 
-  val SchemaDefinition = Schema(QueryType)
+  val MutationType = ObjectType(
+    "Mutation",
+    fields[MinioContext, Unit](
+      Field(
+        "saveFile",
+        OptionType(LinkType),
+        arguments = List(Argument("bucket", StringType), Argument("url", StringType), Argument("fileName", StringType)),
+        resolve =  c =>
+          c.ctx.minio.uploadFile(
+            UploadRequest(bucketName = c.args.arg("bucket"),
+              url = c.args.arg("url"),
+              fileName = c.args.arg("fileName"))
+          )
+      )
+    )
+  )
+
+  val SchemaDefinition = Schema(QueryType, Some(MutationType))
 }

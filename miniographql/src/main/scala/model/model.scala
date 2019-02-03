@@ -6,5 +6,7 @@ object model {
   case class LinkRequest(bucket: String, fileName: String)
 
   case class BucketContent(bucketName: String, content: List[String])
+
+  case class UploadRequest(bucketName: String, url: String, fileName: String)
 }
 
