@@ -12,6 +12,7 @@ class MinioTest(private val connectionProperties: MinioConnectionProperties) {
   private val minioClient = new MinioClient(connectionProperties.endpoint, connectionProperties.accessKey, connectionProperties.secretKey)
 
   def complexRoute(): Unit = {
+
     clearBuckets()
 
     List.range(0, 10).map(i => createBucket("test" + i))
@@ -37,6 +38,8 @@ class MinioTest(private val connectionProperties: MinioConnectionProperties) {
     val content = fromInputStream(downloadFileInputStream).mkString
     println("First file content: :")
     println(content)
+
+    println(minioClient.statObject("test0", "bucket_0 test0 file_0").toString)
   }
 
   def listContainers(): String = {
