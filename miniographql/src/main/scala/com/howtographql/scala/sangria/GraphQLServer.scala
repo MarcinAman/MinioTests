@@ -14,9 +14,11 @@ import sangria.ast.Document
 import sangria.execution.{ErrorWithResolver, Executor, QueryAnalysisError}
 import sangria.marshalling.sprayJson._
 import akka.http.scaladsl.marshallers.sprayjson.SprayJsonSupport._
+import akka.stream.ActorMaterializer
 
-object GraphQLServer {
+class GraphQLServer(implicit materializer: ActorMaterializer) {
   val minioClient = new Minio(loadConnectionProperites)
+  val graphQLSchema = new GraphQLSchema()
 
   def endpoint(requestJSON: JsValue)(implicit ec: ExecutionContext): Route = {
 
@@ -44,7 +46,7 @@ object GraphQLServer {
   private def executeGraphQLQuery(query: Document, operation: Option[String], vars: JsObject)
                                  (implicit ec: ExecutionContext): Future[(StatusCode, JsValue)] = {
     Executor.execute(
-      GraphQLSchema.SchemaDefinition,
+      graphQLSchema.SchemaDefinition,
       query,
       MinioContext(minioClient),
       variables = vars,

@@ -2,13 +2,12 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
-import akka.stream.scaladsl.Sink
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
 
 /*
-docker run -p 9000:9000 -e "MINIO_ACCESS_KEY=AKIAIOSFODNN7EXAMPLE" -e "MINIO_SECRET_KEY=wJalrXUtnFEMI/K7MDENG/bPxRfiCYEXAMPLEKEY" minio/minio server /data
+docker run -p 9000:9000 -e "MINIO_ACCESS_KEY=minio" -e "MINIO_SECRET_KEY=minio123" -e "MINIO_IAM_JWKS_URL=https://localhost:8080/auth" minio/minio server /data
 
 1. Ogarniczenie do 32 nodeow
 2. Czemu nie mozna pobrac bucket-a jako obiekt a jedynie pliki z niego? Byloby to logiczne z punktu widzenia obiektowego

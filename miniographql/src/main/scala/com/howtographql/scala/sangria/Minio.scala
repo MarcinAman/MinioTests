@@ -1,4 +1,6 @@
 package com.howtographql.scala.sangria
+import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.{Sink, Source}
 import model.model.{BucketContent, Link, LinkRequest, UploadRequest}
 import util.Util._
 
@@ -13,23 +15,20 @@ class Minio(private val connectionProperties: MinioConnectionProperties){
   private val minioClient = new MinioClient(connectionProperties.endpoint,
     connectionProperties.accessKey, connectionProperties.secretKey)
 
-  def listBucketContent(bucketName: String)(implicit ec: ExecutionContext): Future[Option[BucketContent]] = {
-    try {
-      val content = minioClient.listObjects(bucketName).asScala.map(e => e.get().objectName()).toList
-
-      Future(Option(BucketContent(bucketName, content)))
-    } catch {
-      case e: Exception =>
-        println(e.toString)
-        Future(Option.empty)
-    }
+  def listBucketContent(bucketName: String)(implicit materializer: ActorMaterializer, ec: ExecutionContext): Future[BucketContent] = {
+    Source(
+      minioClient.listObjects(bucketName)
+        .asScala
+        .map(e => e.get().objectName())
+        .toList
+    ).runWith(Sink.seq).map(e => BucketContent(bucketName, e))
   }
 
   def getDownloadableURL(request: LinkRequest)(implicit ec: ExecutionContext): Future[Option[Link]] = {
     try {
-      val url = minioClient.presignedGetObject(request.bucket, request.fileName)
+      val url = Future(minioClient.presignedGetObject(request.bucket, request.fileName))
 
-      Future(Option(Link(url = url, bucket = request.bucket, fileName = request.fileName)))
+      url.map(url =>  Option(Link(url = url, bucket = request.bucket, fileName = request.fileName)))
     } catch {
       case e: Exception =>
         println(e.toString)

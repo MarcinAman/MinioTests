@@ -4,6 +4,7 @@ import io.minio.MinioClient
 import io.minio.errors.InvalidBucketNameException
 
 import scala.collection.JavaConverters._
+import scala.concurrent.Future
 import scala.io.Source.fromInputStream
 
 case class MinioConnectionProperties(endpoint: String, accessKey: String, secretKey: String)

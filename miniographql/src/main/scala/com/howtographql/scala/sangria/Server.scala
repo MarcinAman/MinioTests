@@ -22,12 +22,14 @@ object Server extends App {
   import actorSystem.dispatcher
   import scala.concurrent.duration._
 
+  val graphQLServer = new GraphQLServer()
+
   scala.sys.addShutdownHook(() -> shutdown())
 
   val route: Route =
     (post & path("graphql")) {
       entity(as[JsValue]) { requestJson =>
-        GraphQLServer.endpoint(requestJson)
+        graphQLServer.endpoint(requestJson)
       }
     } ~ {
       getFromResource("graphiql.html")
