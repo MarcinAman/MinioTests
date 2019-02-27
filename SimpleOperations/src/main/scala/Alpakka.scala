@@ -15,11 +15,13 @@ class Alpakka(private val connectionProperties: MinioConnectionProperties)
   def list(bucketName: String)(implicit materializer: ActorMaterializer): Future[Option[ListBucketResultContents]] = {
 
     val keySource: Source[ListBucketResultContents, NotUsed] =
-      S3.listBucket(bucketName, None).withAttributes(S3Attributes.settings(settings))
+      S3.listBucket(bucketName, None)
+        .withAttributes(S3Attributes.settings(settings))
 
     keySource.runWith(Sink.headOption)(materializer)
   }
 
-//  def createBucket(bucketName: String)(implicit materializer: ActorMaterializer) = {
-//  }
+  def createBucket(bucketName: String) = {
+    S3.makeBucket(bucketName)
+  }
 }

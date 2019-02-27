@@ -2,6 +2,7 @@ import java.util.concurrent.TimeUnit
 
 import akka.actor.ActorSystem
 import akka.stream.ActorMaterializer
+import akka.stream.scaladsl.Sink
 
 import scala.concurrent.Await
 import scala.concurrent.duration.Duration
@@ -37,6 +38,8 @@ object Main extends App {
   implicit val materializer: ActorMaterializer = ActorMaterializer()
 
   val m = new Alpakka(connection)
+
+  Await.result(m.createBucket("penis").runWith(Sink.ignore), Duration(10, TimeUnit.SECONDS))
 
   Await.result(m.list("test"), Duration(10, TimeUnit.SECONDS)) match {
     case Some(value) => println(value)
